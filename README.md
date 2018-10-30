@@ -3,5 +3,7 @@
 findMM will be a simple, python-based command line utility for identifying the multi-mapping transcripts and their connectivity to other transcripts in a reference transcriptome.
 
 Requirements:
-- Bowtie 1 installation [http://bowtie-bio.sourceforge.net/index.shtml](link)
-- 
+- [http://bowtie-bio.sourceforge.net/index.shtml](Bowtie)
+- [http://www.htslib.org/](Samtools)
+- python 3.6 or later
+- bowtie, samtools, and python in PATH variable
