@@ -6,4 +6,4 @@ Requirements:
 - [bowtie](http://bowtie-bio.sourceforge.net/index.shtml)
 - [Samtools](http://www.htslib.org/)
 - python 3.6 or later
-- bowtie, samtools, and python in PATH variable
+- bowtie, samtools, and python in PATH
