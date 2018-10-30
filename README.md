@@ -1,6 +1,6 @@
 # findMM
 
-findMM will be a simple, python-based command line utility for identifying the multi-mapping transcripts and their connectivity to other transcripts in a reference transcriptome.
+findMM will be a simple, python-based command line utility for identifying the multi-mapping transcripts and their connectivity to other transcripts in a reference transcriptome fasta file.
 
 Requirements:
 - [bowtie](http://bowtie-bio.sourceforge.net/index.shtml)
