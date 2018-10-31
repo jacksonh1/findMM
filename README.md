@@ -6,7 +6,7 @@ findMM takes a reference transcriptome as input and outputs a table of all of th
 
 Example output:
 multi-mapping transcript | number of external multi-maps | internal multi-maps?
---- | --- | ---
+___ | ___ | ___
 example | 5 | yes
 
 Requirements:
