@@ -4,11 +4,6 @@ findMM will be a simple, python-based command line utility for identifying the m
 
 findMM takes a reference transcriptome as input and outputs a table of all of the multi-mapping transcripts. For each transcripts it includes how many other transcripts it multi-maps with and if there are any internal multi-maps.
 
-Example output:
-multi-mapping transcript | number of external multi-maps | internal multi-maps
---- | --- | ---
-example | 5 | yes
-
 Requirements:
 - [bowtie](http://bowtie-bio.sourceforge.net/index.shtml)
 - [Samtools](http://www.htslib.org/)
