@@ -8,4 +8,6 @@ Requirements:
 - [bowtie](http://bowtie-bio.sourceforge.net/index.shtml)
 - [Samtools](http://www.htslib.org/)
 - python 3.6 or later
+	- [biopython](https://biopython.org/wiki/Download)
+	- [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html)
 - bowtie, samtools, and python in PATH
