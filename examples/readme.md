@@ -17,9 +17,6 @@
 - output multi-mapping network
 
 **inputs**:
-- index
-    - default: bowtie-build?
-        - `./index/`
 - k
 - output_path
     - k-mer reads go here
@@ -27,10 +24,13 @@
     - default: cwd
 - mismatches
     - default: `-v 2`
-- threads
-    - default: 2?
 - bowtie path
     - default: uses bowtie in PATH
+- threads
+    - default: 2?
+- index
+    - default: bowtie-build?
+        - `./index/`
 
 Documentation:
 - python path
