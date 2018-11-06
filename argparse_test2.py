@@ -18,6 +18,8 @@ import argparse
 import sys
 
 parser = argparse.ArgumentParser(description='identify multi-mapping transcripts and their connectivity in a reference transcriptome fasta file')
-parser.add_argument('k', metavar='k', nargs='+', type=int, help='k-mer read lengths (i.e. k). Recommend k be equal to the smallest read length in an experimental dataset')
-parser.add_argument('bowtie path', default='bowtie', type=str, help='the path to the bowtie executable. Default is bowtie in PATH')
+parser.add_argument('-k', metavar='integer', nargs=1, type=int, help='k-mer read lengths (i.e. k). Recommend k be equal to the smallest read length in an experimental dataset')
+parser.add_argument('bowtie_path', default='bowtie', help='the path to the bowtie executable. Default is bowtie in PATH')
 args = parser.parse_args()
+
+print(args.k,args)
