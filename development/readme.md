@@ -17,26 +17,61 @@
 - output multi-mapping network
 
 **inputs**:
-- k
-- output_path
+- k - **required**
+- mismatches - **optional**
+    - default: `-v 2`
+- bowtie path - **optional**
+    - default: uses bowtie in PATH
+- threads - **optional**
+    - default: 2?
+- index - **optional**
+    - default: bowtie-build?
+        - `./index/`
+- input transcriptome fasta file - **required**
+    - positional
+- output_path - **optional**
     - k-mer reads go here
     - table and network go here
     - default: cwd
-- mismatches
-    - default: `-v 2`
-- bowtie path
-    - default: uses bowtie in PATH
-- threads
-    - default: 2?
-- index
-    - default: bowtie-build?
-        - `./index/`
 
-Documentation:
+**Documentation**:
 - python path
     - default uses `python` in PATH
     - change shebang if you use a different python
 
+
+major steps in script:
+1. generate k_mers
+    - inputs
+        - reference transcriptome
+        - k
+    - output
+        - k-mer fasta file
+2. optional - generate index
+    - inputs
+        - reference transcriptome
+    - output
+        - bowtie index
+3. align back to transcriptome with `-m 1 --max`
+    - input
+        - k-mer fasta dataset
+        - reference transcriptome index
+    - output
+        - multi-mapping k-mers as fasta file
+            - could generate simple list from this
+        - alignment sam file
+4. align multi-mappers back to transcriptome with `-a`
+    - input
+        - multi-mapping k-mers suppressed by `m=1` in last step
+        - reference transcriptome index
+    - output
+        - alignment sam file
+5. network construction
+    - input
+        - alignment sam file from 4
+    - output
+        - more detailed table `csv`
+        - network `csv`
 
 
 
