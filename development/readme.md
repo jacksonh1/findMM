@@ -3,6 +3,8 @@
 
 `example_transcriptome.fasta` is just a smaller transcriptome created for development purposes
 
+Question: how do I deal with permissions? Each script probably won't be executable by default.
+Check out other programs to see how they do it
 
 **plan brainstorming:**
 - use `argparse` for CLI
