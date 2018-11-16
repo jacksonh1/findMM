@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-#./argparse_test2.py -p4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta
+#./findMM.py -p4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta
+
+# could add 'save_kmers'. Action.... In kmer_function(args, save_kmers):
 
 # Parsing command line arguments
 import argparse
@@ -19,12 +21,20 @@ parser.add_argument(
     help='''the path to the bowtie executable. Default: bowtie in PATH'''
 )
 parser.add_argument(
+    '-v',
+    '--mismatches',
+    metavar="<INT>",
+    default=2,
+    type=int,
+    help='''maximum number of mismatches allowed in alignments (given directly to bowtie parameter -v). Default: 2'''
+)
+parser.add_argument(
     '-p',
     '--threads',
     metavar="<INT>",
     default=1,
     type=int,
-    help='''Number of alignment threads for bowtie to use (given directly to bowtie parameter: -p). Default: 1'''
+    help='''Number of alignment threads for bowtie to use (given directly to bowtie parameter -p). Default: 1'''
 )
 parser.add_argument(
     '-out',
@@ -64,12 +74,13 @@ args = parser.parse_args()
 print('''
 Running findMM with the following parameters:
  - bowtie path: {}
- - threads: {}
+ - number of allowed mismatches (-v): {}
+ - threads used in alignment: {}
  - output directory: {}
  - bowtie index: {}
  - k: {}
  - reference transcriptome: {}
-'''.format(args.b, args.threads, args.out, args.index, args.k, args.reference))
+'''.format(args.b, args.mismatches, args.threads, args.out, args.index, args.k, args.reference))
 
 
 # %%
@@ -78,6 +89,7 @@ Running findMM with the following parameters:
 # ==============================================================================
 
 def k_mer_generation(args):
+    subprocess.call('mkdir {}'.format(args.out), shell=True)
     # parse input fasta file name to get output filename
     base = os.path.basename(args.reference)
     basenoext, ext = os.path.splitext(base)
@@ -94,6 +106,25 @@ def k_mer_generation(args):
         shell=True
     )
     return k_mer_file
+
+
+def bowtie_alignment1(args, k_mer_file):
+    '''
+    args - argparse parsed command line arguments
+    k_mer_file - path to fasta formatted k-mer reads
+    '''
+    # subprocess.call('mkdir {}'.format(args.out), shell=True)
+    k_mer_noext, ext = os.path.splitext(k_mer_file)
+    sam_path = '{}.sam'.format(k_mer_noext)
+    max_output = '{}-multi-mapping_kmers.fastq'.format(k_mer_noext)
+    subprocess.call(
+        '{}'.format(
+            args.out
+        ),
+        shell=True
+    )
+
+    $bowtie - S - p $threads - -norc $mismatches - f - m 1 - -max $max_output $index_path $k_mer_file $sam_path
 
 
 print('generating transcriptome k-mers')

@@ -79,3 +79,21 @@ major steps in script:
 
 
 bowtie alignment test: `bowtie -S -t --norc -v 2 -p 4 -f -m 1 ./index/example_transcriptome ./30-mers_example.fa 30-mers_example.sam`
+
+
+
+## first bowtie alignment:
+
+inputs:
+threads
+max_output = [k_mer_name + multi-mapping_kmers.fastq]`
+index_path
+k_mer_file
+sam_path = `[output directory + output_sam_file]`
+norc
+mismatches
+
+```bash
+mkdir [output directory]
+$bowtie -S -p $threads --norc $mismatches -f -m 1 --max $max_output $index_path $k_mer_file $sam_path
+```
