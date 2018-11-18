@@ -9,6 +9,8 @@ import argparse
 import sys
 import os
 import subprocess
+import pandas as pd
+from string import Template
 
 
 parser = argparse.ArgumentParser(
@@ -121,23 +123,24 @@ def bowtie_alignment1(args, k_mer_file):
     k_mer_file - path to fasta formatted k-mer reads
     """
     # TODO - change to log file and display
-
-    from string import Template
-
     params = dict(args._get_kwargs())
     # subprocess.call('mkdir {}'.format(args.out), shell=True)
     k_mer_noext, ext = os.path.splitext(k_mer_file)
     sam_path = "{}.sam".format(k_mer_noext)
     max_output = "{}-multi-mapping_kmers.fa".format(k_mer_noext)
-    MM_sam_path = "{}_MMers.sam".format(k_mer_noext)  # MMing k_mer alignment sam
-    MM_sam_path_noH = "{}_MMers_noH.sam".format(
-        k_mer_noext
-    )  # MMing k_mer alignment sam
+    # MMing k_mer alignment sam
+    MM_sam_path = "{}_MMers.sam".format(k_mer_noext)
+    # MMing k_mer alignment sam, no header
+    MM_sam_path_noH = "{}_MMers_noH.sam".format(k_mer_noext)
+    MM_sorted_bam_path = "{}_sorted.bam".format(k_mer_noext)
     params["sam_path"] = sam_path
     params["max_output"] = max_output
     params["k_mer_file"] = k_mer_file
     params["MM_sam_path"] = MM_sam_path
     params["MM_sam_path_noH"] = MM_sam_path_noH
+    params["MM_sorted_bam_path"] = MM_sorted_bam_path
+
+    # bowtie alignment 1
     bowtie_command1 = Template(
         "$b -S -p $threads --norc -v $mismatches -f -m 1 --max $max_output $index $k_mer_file $sam_path"
     )
@@ -154,6 +157,19 @@ def bowtie_alignment1(args, k_mer_file):
         + bowtie_command2.substitute(params)
     )
     subprocess.call(bowtie_command2.substitute(params), shell=True)
+
+    # need sorted bam file for samtools depth
+    print("converting to BAM, sorting, and indexing")
+    subprocess.call(
+        "samtools view -u {} | samtools sort -o {}".format(
+            params["MM_sam_path"], params["MM_sorted_bam_path"]
+        ),
+        shell=True,
+    )
+    subprocess.call(
+        "samtools index {}".format(params["MM_sorted_bam_path"]), shell=True
+    )
+
     # remove header from sam file
     subprocess.call(
         "samtools view -o {} {}".format(
@@ -166,8 +182,6 @@ def bowtie_alignment1(args, k_mer_file):
 
 
 def multi_map_network(params):
-    import pandas as pd
-
     print("generating multi-mapping network")
     k_mer_noext, ext = os.path.splitext(params["k_mer_file"])
     MM_network_file = "{}-MM_network.csv".format(k_mer_noext)
@@ -209,6 +223,7 @@ def multi_map_network(params):
             test.append(list(network2.loc[i, :]))
     network3 = pd.DataFrame(test, columns=["gene", "read_origin", "weight"])
     network3.to_csv(params["MM_network_file"], index=False)
+    return params
 
 
 def main():

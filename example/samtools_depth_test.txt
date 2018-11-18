@@ -1,0 +1,46 @@
+samtools depth example_transcriptome-30-mers_sorted.bam > depth.txt
+samtools depth -a example_transcriptome-30-mers_sorted.bam > depth_a.txt
+bedtools genomecov -d -ibam example_transcriptome-30-mers_sorted.bam > bedtools_depth.txt
+
+
+import pandas as pd
+ls
+bt = pd.read_table('bedtools_depth.txt',sep='\t')
+bt.head()
+bt = pd.read_table('bedtools_depth.txt',sep='\t',header = None)
+bt.head()
+def test(df):
+    return len(df[df[2]>0])
+test(bt)
+len(bt[bt[2]>0])
+bt[bt[2]>0]
+bt.head()
+d = pd.read_table('depth.txt',sep='\t')
+ls
+da = pd.read_table('depth_a.txt',sep='\t')
+d.head()
+d = pd.read_table('depth.txt',sep='\t',header = None)
+da = pd.read_table('depth_a.txt',sep='\t',header = None)
+d.head()
+da.head()
+test(bt)
+test(d)
+test(da)
+def test(df):
+    print(len(df[df[2]>0]))
+    df2 = df[df[2]>0]
+    return df2
+bt2 = test(bt)
+d2 = test(d)
+da2 = test(da)
+bt2[2]==d2[2]
+bt2
+bt2 = test(bt).reset_index(drop=True)
+d2 = test(d).reset_index(drop=True)
+da2 = test(da).reset_index(drop=True)
+bt2.head()
+bt2[2]==d2[2]
+bt2[2]==d2[2].value_counts()
+(bt2[2]==d2[2]).value_counts()
+(bt2[2]==da2[2]).value_counts()
+history
