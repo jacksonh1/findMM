@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# ./findMM.py -p4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta
+# ./findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
 
 # could add 'save_kmers'. Action.... In kmer_function(args, save_kmers):
 
@@ -94,7 +94,7 @@ Running findMM with the following parameters:
     )
 )
 
-dict(args._get_kwargs())
+
 # %%
 # ==============================================================================
 # // run scripts
@@ -123,6 +123,8 @@ def bowtie_alignment1(args, k_mer_file):
     k_mer_file - path to fasta formatted k-mer reads
     """
     # TODO - change to log file and display
+
+    # turn command line arguments into filepaths
     params = dict(args._get_kwargs())
     # subprocess.call('mkdir {}'.format(args.out), shell=True)
     k_mer_noext, ext = os.path.splitext(k_mer_file)
@@ -133,12 +135,17 @@ def bowtie_alignment1(args, k_mer_file):
     # MMing k_mer alignment sam, no header
     MM_sam_path_noH = "{}_MMers_noH.sam".format(k_mer_noext)
     MM_sorted_bam_path = "{}_sorted.bam".format(k_mer_noext)
+    depth = "{}_depth.txt".format(k_mer_noext)
+    idxstats = "{}_idx.txt".format(k_mer_noext)
+
     params["sam_path"] = sam_path
     params["max_output"] = max_output
     params["k_mer_file"] = k_mer_file
     params["MM_sam_path"] = MM_sam_path
     params["MM_sam_path_noH"] = MM_sam_path_noH
     params["MM_sorted_bam_path"] = MM_sorted_bam_path
+    params["depth"] = depth
+    params["idxstats"] = idxstats
 
     # bowtie alignment 1
     bowtie_command1 = Template(
@@ -170,6 +177,20 @@ def bowtie_alignment1(args, k_mer_file):
         "samtools index {}".format(params["MM_sorted_bam_path"]), shell=True
     )
 
+    # get coverage depth
+    subprocess.call(
+        "samtools depth {} > {}".format(params["MM_sorted_bam_path"], params["depth"]),
+        shell=True,
+    )
+
+    # calculate idxstats
+    subprocess.call(
+        "samtools idxstats {} > {}".format(
+            params["MM_sorted_bam_path"], params["idxstats"]
+        ),
+        shell=True,
+    )
+
     # remove header from sam file
     subprocess.call(
         "samtools view -o {} {}".format(
@@ -184,8 +205,17 @@ def bowtie_alignment1(args, k_mer_file):
 def multi_map_network(params):
     print("generating multi-mapping network")
     k_mer_noext, ext = os.path.splitext(params["k_mer_file"])
-    MM_network_file = "{}-MM_network.csv".format(k_mer_noext)
+
+    # creat name of network csv file
+    MM_network_file = "{}-MM_network_all_connections.csv".format(k_mer_noext)
+    # create name of network csv file with duplicate connections removed
+    MM_network_file_duplicates_removed = "{}-MM_network_unique_connections.csv".format(
+        k_mer_noext
+    )
+
     params["MM_network_file"] = MM_network_file
+    params["MM_network_file_duplicates_removed"] = MM_network_file_duplicates_removed
+
     df = pd.read_table(params["MM_sam_path_noH"], sep="\t", header=None)
     df = df[[0, 2, 3]]
     df.columns = ["read", "gene", "position (1-based leftmost mapping POSition)"]
@@ -196,8 +226,12 @@ def multi_map_network(params):
         df["position (1-based leftmost mapping POSition)"] - df["read_origin_position"]
     )
     df["map_pos=read_pos?"] = df["pos_diff"] == 0
-    selfMM = df[df["gene"] == df["read_origin"]]
-    true_selfMM = selfMM[selfMM["map_pos=read_pos?"] == False]
+
+    # self_maps = transcript of origin and mapped transcript are equal.
+    # Includes correct maps and internal multi-maps
+    self_maps = df[df["gene"] == df["read_origin"]]
+    # true selfMM = internal multi-maps
+    true_selfMM = self_maps[self_maps["map_pos=read_pos?"] == False]
     true_selfMM2 = true_selfMM[["gene", "read_origin"]].copy()
     otherMM = df[df["gene"] != df["read_origin"]]
     MMnetwork = pd.concat(
@@ -211,30 +245,122 @@ def multi_map_network(params):
         ).reset_index()
         counts["gene"] = i
         counts = counts[["gene", "index", "read_origin"]]
-        counts.columns = ["gene", "read_origin", "weight"]
+        counts.columns = ["gene", "read_origin", "MM-kmer-alignments"]
         df_list.append(counts)
     network2 = pd.concat(df_list)
     network2 = network2.reset_index(drop=True)
+    network2.to_csv(params["MM_network_file"], index=False)
+
+    # remove duplicate connections
     test = []
     for i in network2.index:
         j = network2.loc[i, "gene"]
         k = network2.loc[i, "read_origin"]
-        if [k, j, network2.loc[i, "weight"]] not in test:
+        if [k, j, network2.loc[i, "MM-kmer-alignments"]] not in test:
             test.append(list(network2.loc[i, :]))
-    network3 = pd.DataFrame(test, columns=["gene", "read_origin", "weight"])
-    network3.to_csv(params["MM_network_file"], index=False)
+    network3 = pd.DataFrame(test, columns=["gene", "read_origin", "MM-kmer-alignments"])
+    network3.to_csv(params["MM_network_file_duplicates_removed"], index=False)
     return params
+
+
+def importidx(filename):
+    df = pd.read_table(
+        filename,
+        sep="\t",
+        header=None,
+        names=["transcript", "length", "alignments", "unmapped"],
+    )
+    df = df[df["transcript"] != "*"]
+    df = df.drop(["unmapped", "alignments"], axis=1)
+    df = df.reset_index(drop=True)
+    return df
+
+
+def importdepth(filename):
+    depth = pd.read_table(
+        filename, header=None, names=["transcript", "position", "coverage"]
+    )
+    depth = depth.drop("position", axis=1)
+    return depth
+
+
+def num_of_MM(df):
+    df2 = df[df["coverage"] > 0]
+    counts = df2.groupby("transcript").count()
+    counts = counts.reset_index()
+    counts.columns = ["transcript", "MM_bps"]
+    return counts
+
+
+def fractionMM(params):
+    depth = importdepth(params["depth"])
+    depth_count = num_of_MM(depth)
+    idx = importidx(params["idxstats"])
+    dep_idx = pd.merge(depth_count, idx, on="transcript")
+    dep_idx["percentMM"] = (dep_idx["MM_bps"] / dep_idx["length"]) * 100
+    return dep_idx
+
+
+def build_table(params):
+    # create name of multi-mapper table csv file
+    k_mer_noext, ext = os.path.splitext(params["k_mer_file"])
+    table_file = "{}-multi-mapping_transcripts_table.csv".format(k_mer_noext)
+    params["table_file"] = table_file
+
+    # build network using samtools depth, samtools idxstats, and network file
+    net = pd.read_csv(params["MM_network_file"])
+    net = net.drop("MM-kmer-alignments", axis=1)
+    otherMM = net[net["gene"] != net["read_origin"]]
+    internalMM = net[net["gene"] == net["read_origin"]]
+    table = otherMM.groupby("gene").count()
+    table = table.reset_index()
+    internalMM = internalMM.drop(["read_origin"], axis=1)
+    internalMM["internal multi-maps?"] = "yes"
+    table = pd.merge(table, internalMM, how="outer")
+    table["internal multi-maps?"] = table["internal multi-maps?"].fillna("no")
+    table["read_origin"] = table["read_origin"].fillna(0)
+    table.columns = ["transcript", "external multimaps", "internal multi-maps?"]
+    frac = fractionMM(params)
+    table = pd.merge(frac, table, on="transcript")
+    table = table.drop("MM_bps", axis=1)
+    table.columns = [
+        "transcript",
+        "length (bp)",
+        "percent of coding region that multimaps",
+        "external multimaps",
+        "internal multi-maps?",
+    ]
+    table = table.round({"percent of coding region that multimaps": 2})
+    table = table.sort_values(
+        "percent of coding region that multimaps", ascending=False
+    )
+    table.to_csv(params["table_file"], index=False)
+    return table
 
 
 def main():
     print("generating transcriptome k-mers")
     k_mer_file = k_mer_generation(args)
     params = bowtie_alignment1(args, k_mer_file)
-    multi_map_network(params)
+    params = multi_map_network(params)
+    table = build_table(params)
+    # print(table.columns)
 
 
 if __name__ == "__main__":
     main()
+
+
+######
+## NOTE
+# I should probably have these functions be standalone and not have a dictionary of
+# filenames as the input of each function
+# this makes it very hard to use these functions in isolation
+# inputs should be individual filenames I guess
+# should have a separate function or code under main() to handle commandline input
+# should argparse stuff go under main()?
+
+
 # %%
 # ==============================================================================
 # // TITLE
