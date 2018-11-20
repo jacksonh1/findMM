@@ -11,3 +11,19 @@ Requirements:
 	- [biopython](https://biopython.org/wiki/Download)
 	- [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html)
 - bowtie, samtools, and python in PATH
+
+---
+
+## this project is not yet ready for distribution, however the script: /example/findMM.py works
+
+### major/essential TO-DOs
+- clean up generated files if script fails
+- better comments
+	- especially network script
+- usage documentation
+- example analysis with explanation
+- link to paper
+- merge k-mer-script with main script?
+- many other minor details
+
+	
