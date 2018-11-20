@@ -15,7 +15,7 @@ Requirements:
 ---
 
 ## this project is not yet ready for distribution, however the script: /example/findMM.py works
-## all suggestions and constructive feedback is welcome and appreciated
+**all suggestions and constructive feedback is welcome and appreciated**
 
 ### major/essential TO-DOs
 - clean up generated files if script fails
