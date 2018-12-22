@@ -1,8 +1,8 @@
 # findMM
 
 ## this project is not yet ready for distribution, however the script: `findMM.py` works
-run ./findMM.py -h for info and command line arguments
-See `example` folder for an example use of `findMM.py`
+run `./findMM.py -h` for info and command line arguments <br>
+See `example` folder for an example use of findMM
 **all suggestions and constructive feedback are welcome and appreciated**
 
 ## overview
