@@ -19,11 +19,5 @@ Requirements:
 
 ### major/essential TO-DOs
 - clean up generated files if script fails
-- better comments
-	- especially network script
-- usage documentation
-- example analysis with explanation
-- link to paper
-- many other minor details
 
 	
