@@ -1,4 +1,4 @@
-transcript,length (bp),percent of transcript that multimaps,external multimaps,internal multi-maps?
+transcript,length (bp),percent of transcript that multi-maps,external multi-maps,internal multi-maps?
 YLR157C-C,132,100.0,3.0,no
 YLR156C-A,132,100.0,3.0,no
 YLR161W,345,100.0,4.0,no

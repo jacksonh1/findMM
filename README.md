@@ -1,14 +1,30 @@
 # findMM
 
-#### this project is not yet ready for distribution, however the script: `findMM.py` works
 run `./findMM.py -h` for info and command line arguments <br>
 See `example` folder for an example use of findMM <br>
-**all suggestions and constructive feedback are welcome and appreciated**
 
 ## overview
 findMM is be a simple, python-based command line utility for identifying the multi-mapping transcripts and their multi-mapping connectivity to other transcripts in a reference transcriptome fasta file. The approach to identifying the multi-mapping transcripts is similar to the [`crossmap`](https://plastid.readthedocs.io/en/latest/generated/plastid.bin.crossmap.html) script from the plastid package.
 
-findMM takes a reference transcriptome as input and outputs a table of all of the multi-mapping transcripts in addition to a multi-mapping network `csv` file describing the multi-mapping patterns within the transcriptome. For each transcript the multi-mapping table includes how many other transcripts it multi-maps with, if there are any internal multi-maps, and what percent of the transcript sequence multi-maps.
+findMM takes a reference transcriptome as input and produces a table of all of the multi-mapping transcripts. For each transcript the multi-mapping table includes the transcript name, transcript length, how many other transcripts it multi-maps with, if there are any internal multi-maps, and what percent of the transcript sequence multi-maps.
+<br>Multi-mapping table:
+
+| transcript | length (bp) | percent of transcript that multi-maps | external multi-maps | internal multi-maps? |
+| ---------- | ----------- | ------------------------------------ | ------------------ | -------------------- |
+| YJL138C  	 | 1188        | 100                                  | 3                  | no                   |
+| ...      	 | ...         | ...                                  | ...                | ...                  |
+
+findMM also outputs a multi-mapping network file describing the multi-mapping patterns within the transcriptome. The network file is simply a `csv` file where each row is a multi-mapping connection including both transcript names and the number of k-mers which map to both transcripts. The network can be visualized in [cytoscape](https://cytoscape.org/).
+<br>Multi-mapping network:
+
+| read_origin | transcript | MM-kmer-alignments |
+| ----------  | ---------- | ------------------ |
+| YLL024C  	  | YAL005C    | 1567               |
+| ...      	  | ...        | ...                |
+- **read_origin** - transcript the k-mers originate from
+- **transcript** - transcript the k-mers multi-map with
+- **MM-kmer-alignments** - Number of k-mers that multi-map between the two transcripts
+
 
 ## Prerequisites for findMM:
 - [bowtie](http://bowtie-bio.sourceforge.net/index.shtml)
@@ -18,9 +34,9 @@ findMM takes a reference transcriptome as input and outputs a table of all of th
 	- [biopython](https://biopython.org/wiki/Download)
 	- [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html)
 - samtools and python available in PATH variable
----
 
-### major/essential TO-DOs
-- clean up generated files if script fails
+## using findMM:
+
+To run fingMM, use the script `findMM.py`. You can add `findMM.py` to your PATH for convenience.
 
 
