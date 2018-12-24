@@ -39,4 +39,46 @@ findMM also outputs a multi-mapping network file describing the multi-mapping pa
 
 To run fingMM, use the script `findMM.py`. You can add `findMM.py` to your PATH for convenience.
 
+For example, with `findMM.py` in current directory, you would run:
+```bash
+./findMM.py [options]
+```
+where `[options]` are the command line arguments<br>
+Running `./findMM.py -h` lists the available command line arguments and explains what each parameter is:
+```bash
+./findMM.py -h
+```
+```
+usage: findMM.py [-h] -ref <file> -k <INT> -i <ebwt_base> [-b <bowtie path>]
+                 [-v <INT>] [-p <INT>] [-out <directory>]
+
+identify multi-mapping transcripts and their connectivity in a reference
+        transcriptome fasta file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -ref <file>, --reference <file>
+                        input reference transcriptome file in fasta format
+  -k <INT>              k-mer read lengths (i.e. k). Recommend k be equal to
+                        the smallest read length in an experimental dataset
+  -i <ebwt_base>, --index <ebwt_base>
+                        location of bowtie index made from input reference transcriptome.
+                        To create bowtie index you can use:
+                        bowtie-build <reference_in> <ebwt_outfile_base>
+  -b <bowtie path>      the path to the bowtie executable. Default: bowtie in
+                        PATH
+  -v <INT>, --mismatches <INT>
+                        maximum number of mismatches allowed in alignments
+                        (given directly to bowtie parameter -v). Default: 2
+  -p <INT>, --threads <INT>
+                        Number of alignment threads for bowtie to use
+                        (given directly to bowtie parameter -p). Default: 1
+  -out <directory>      Directory where script outputs are saved. Default is
+                        current directory
+```
+**The following arguments are required:**
+- `-ref <file>, --reference <file>`
+- `-k <INT>`
+- `-i <ebwt_base>, --index <ebwt_base>`
+
 

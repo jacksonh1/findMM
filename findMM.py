@@ -8,6 +8,7 @@
 
 
 import argparse
+from argparse import RawTextHelpFormatter
 import sys
 import os
 import subprocess
@@ -395,54 +396,9 @@ def main():
     execute functions with inputs from command line
     """
     parser = argparse.ArgumentParser(
-        description="""identify multi-mapping transcripts and their connectivity in a reference transcriptome fasta file"""
-    )
-    parser.add_argument(
-        "-b",
-        metavar="<bowtie path>",
-        default="bowtie",
-        help="""the path to the bowtie executable. Default: bowtie in PATH""",
-    )
-    parser.add_argument(
-        "-v",
-        "--mismatches",
-        metavar="<INT>",
-        default=2,
-        type=int,
-        help="""maximum number of mismatches allowed in alignments (given directly to bowtie parameter -v). Default: 2""",
-    )
-    parser.add_argument(
-        "-p",
-        "--threads",
-        metavar="<INT>",
-        default=1,
-        type=int,
-        help="""Number of alignment threads for bowtie to use (given directly to bowtie parameter -p). Default: 1""",
-    )
-    parser.add_argument(
-        "-out",
-        metavar="<directory>",
-        default="./",
-        help="""Directory where script outputs are saved. Default is current directory""",
-    )
-    parser.add_argument(
-        "-i",
-        "--index",
-        required=True,
-        metavar="<ebwt_base>",
-        help="""location of bowtie index made from input reference transcriptome.
-        Use bowtie-build <reference_in> <ebwt_outfile_base>
-        example:
-        bowtie-build ./example_transcriptome.fasta ./index/example_transcriptome
-        future:
-        make argument optional and build index in ./index by default""",
-    )
-    parser.add_argument(
-        "-k",
-        metavar="<INT>",
-        required=True,
-        type=int,
-        help="""k-mer read lengths (i.e. k). Recommend k be equal to the smallest read length in an experimental dataset""",
+        description="""identify multi-mapping transcripts and their connectivity in a reference
+        transcriptome fasta file""",
+        formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
         "-ref",
@@ -451,6 +407,49 @@ def main():
         required=True,
         help="""input reference transcriptome file in fasta format""",
     )
+    parser.add_argument(
+        "-k",
+        metavar="<INT>",
+        required=True,
+        type=int,
+        help="""k-mer read lengths (i.e. k). Recommend k be equal to\nthe smallest read length in an experimental dataset""",
+    )
+    parser.add_argument(
+        "-i",
+        "--index",
+        required=True,
+        metavar="<ebwt_base>",
+        help="""location of bowtie index made from input reference transcriptome.\nTo create bowtie index, you can use:\nbowtie-build <reference_in> <ebwt_outfile_base>""",
+    )
+    parser.add_argument(
+        "-b",
+        metavar="<bowtie path>",
+        default="bowtie",
+        help="""the path to the bowtie executable. Default: bowtie in\nPATH""",
+    )
+    parser.add_argument(
+        "-v",
+        "--mismatches",
+        metavar="<INT>",
+        default=2,
+        type=int,
+        help="""maximum number of mismatches allowed in alignments\n(given directly to bowtie parameter -v). Default: 2""",
+    )
+    parser.add_argument(
+        "-p",
+        "--threads",
+        metavar="<INT>",
+        default=1,
+        type=int,
+        help="""Number of alignment threads for bowtie to use\n(given directly to bowtie parameter -p). Default: 1""",
+    )
+    parser.add_argument(
+        "-out",
+        metavar="<directory>",
+        default="./",
+        help="""Directory where script outputs are saved. Default is\ncurrent directory""",
+    )
+
     args = parser.parse_args()
     print(
         """
