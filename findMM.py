@@ -3,8 +3,7 @@
 # test command:
 # ./findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
 
-# could add 'save_kmers'. Action.... In kmer_function(args, save_kmers):
-# the whole script would probably be simpler if I had used pysam
+# script would be simpler if I had used pysam
 
 
 import argparse
@@ -16,9 +15,9 @@ import pandas as pd
 from string import Template
 from Bio import SeqIO
 
-# %%
+
 # ==============================================================================
-# // k-mer scripts
+# // functions
 # ==============================================================================
 
 
@@ -69,12 +68,6 @@ def kmer_gen(k, reference, output_filename):
             fasta_reads = read_to_fasta(gen_reads(sequence, k), name, k)
             for i in fasta_reads:
                 output_handle.write("{}\n".format(i))
-
-
-# %%
-# ==============================================================================
-# // main scripts
-# ==============================================================================
 
 
 def generate_filenames(args, message=True):

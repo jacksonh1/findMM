@@ -82,3 +82,10 @@ optional arguments:
 - `-i <ebwt_base>, --index <ebwt_base>`
 
 
+## example
+
+```bash
+cd example/
+```
+
+
