@@ -85,7 +85,72 @@ optional arguments:
 ## example
 
 ```bash
-cd example/
+~/findMM$ cd example/
+```
+```bash
+~/findMM/example$ mkdir index
+~/findMM/example$ bowtie-build example_transcriptome.fasta index/example_transcriptome
 ```
 
+```bash
+~/findMM/example$ ../findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
+```
+```
+Running findMM with the following parameters:
+     - bowtie path: 'bowtie'
+     - number of allowed mismatches (-v): '2'
+     - threads used in alignment: '4'
+     - output directory: 'out_test'
+     - bowtie index: './index/example_transcriptome'
+     - k: '30'
+     - reference transcriptome: 'example_transcriptome.fasta'
 
+OUTPUT FILES:
+- k-mer filename:
+    out_test/example_transcriptome-30-mers.fa
+- multi-mapping (MMing) k-mers:
+    out_test/example_transcriptome-30-mers-multi-mapping_kmers.fa
+- network csv file:
+    out_test/example_transcriptome-30-mers-MM_network_all_connections.csv
+- network csv file with duplicate connections removed:
+    out_test/example_transcriptome-30-mers-MM_network_unique_connections.csv
+- mulit-mapping transcripts table:
+    out_test/example_transcriptome-30-mers-multi-mapping_transcripts_table.csv
+
+temperary files:
+- k-mer alignment sam (removed):
+    out_test/example_transcriptome-30-mers.sam
+- MMing k_mer alignment sam (removed):
+    out_test/example_transcriptome-30-mers_MMers.sam
+- MMing k_mer alignment sam, no header (removed):
+    out_test/example_transcriptome-30-mers_MMers_noH.sam
+- MMing k_mer alignment BAM, sorted (removed):
+    out_test/example_transcriptome-30-mers_sorted.bam
+- samtools depth (removed):
+    out_test/example_transcriptome-30-mers_depth.txt
+- samtools idxstats (removed):
+    out_test/example_transcriptome-30-mers_idx.txt
+
+mkdir: out_test: File exists
+generating transcriptome k-mers...
+
+running bowtie alignment with k-mers:
+bowtie -S -p 4 --norc -v 2 -f -m 1 --max out_test/example_transcriptome-30-mers-multi-mapping_kmers.fa ./index/example_transcriptome out_test/example_transcriptome-30-mers.fa out_test/example_transcriptome-30-mers.sam
+# reads processed: 615007
+# reads with at least one reported alignment: 594972 (96.74%)
+# reads that failed to align: 0 (0.00%)
+# reads with alignments suppressed due to -m: 20035 (3.26%)
+Reported 594972 alignments
+
+running bowtie alignment with multi-mapping k-mers:
+bowtie -S -p 4 --norc -v 2 -f -a ./index/example_transcriptome out_test/example_transcriptome-30-mers-multi-mapping_kmers.fa out_test/example_transcriptome-30-mers_MMers.sam
+# reads processed: 20035
+# reads with at least one reported alignment: 20035 (100.00%)
+# reads that failed to align: 0 (0.00%)
+Reported 61257 alignments
+converting to BAM, sorting, and indexing
+creating multi-mapping network...
+building multi-mapper table...
+cleaning up temporary files...
+done!
+```
