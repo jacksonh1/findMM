@@ -96,8 +96,6 @@ optional arguments:
 ~/findMM/example$ ../findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
 ```
 ```
-../findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
-
 Running findMM with the following parameters:
      - bowtie path: 'bowtie'
      - number of allowed mismatches (-v): '2'
