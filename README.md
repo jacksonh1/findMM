@@ -96,6 +96,8 @@ optional arguments:
 ~/findMM/example$ ../findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
 ```
 ```
+../findMM.py -p 4 -i ./index/example_transcriptome -k 30 -ref example_transcriptome.fasta -out out_test
+
 Running findMM with the following parameters:
      - bowtie path: 'bowtie'
      - number of allowed mismatches (-v): '2'
@@ -114,7 +116,7 @@ OUTPUT FILES:
     out_test/example_transcriptome-30-mers-MM_network_all_connections.csv
 - network csv file with duplicate connections removed:
     out_test/example_transcriptome-30-mers-MM_network_unique_connections.csv
-- mulit-mapping transcripts table:
+- multi-mapping transcripts table:
     out_test/example_transcriptome-30-mers-multi-mapping_transcripts_table.csv
 
 temperary files:
@@ -151,6 +153,7 @@ Reported 61257 alignments
 converting to BAM, sorting, and indexing
 creating multi-mapping network...
 building multi-mapper table...
+47 of 394 transcripts multi-map (11.93%)
 cleaning up temporary files...
 done!
 ```

@@ -110,7 +110,7 @@ def generate_filenames(args, message=True):
 - multi-mapping (MMing) k-mers:\n    $max_output
 - network csv file:\n    $MM_network_file
 - network csv file with duplicate connections removed:\n    $MM_network_file_duplicates_removed
-- mulit-mapping transcripts table:\n    $table_file
+- multi-mapping transcripts table:\n    $table_file
 
 temperary files:
 - k-mer alignment sam (removed):\n    $sam_path
@@ -258,7 +258,15 @@ def importidx(filename):
         names=["transcript", "length", "alignments", "unmapped"],
     )
     df = df[df["transcript"] != "*"]
-    df = df.drop(["unmapped", "alignments"], axis=1)
+    df = df.drop(["unmapped"], axis=1)
+    num_MMers = len(df[df["alignments"] != 0])
+    num_transc = len(df)
+    print(
+        "{0} of {1} transcripts multi-map ({2:.4g}%)".format(
+            num_MMers, num_transc, (num_MMers / num_transc) * 100
+        )
+    )
+    df = df.drop(["alignments"], axis=1)
     df = df.reset_index(drop=True)
     return df
 
