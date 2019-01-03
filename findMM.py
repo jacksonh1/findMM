@@ -112,7 +112,7 @@ def generate_filenames(args, message=True):
 - network csv file with duplicate connections removed:\n    $MM_network_file_duplicates_removed
 - multi-mapping transcripts table:\n    $table_file
 
-temperary files:
+temporary files:
 - k-mer alignment sam (removed):\n    $sam_path
 - MMing k_mer alignment sam (removed):\n    $MM_sam_path
 - MMing k_mer alignment sam, no header (removed):\n    $MM_sam_path_noH

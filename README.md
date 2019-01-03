@@ -117,7 +117,7 @@ OUTPUT FILES:
 - multi-mapping transcripts table:
     out_test/example_transcriptome-30-mers-multi-mapping_transcripts_table.csv
 
-temperary files:
+temporary files:
 - k-mer alignment sam (removed):
     out_test/example_transcriptome-30-mers.sam
 - MMing k_mer alignment sam (removed):
