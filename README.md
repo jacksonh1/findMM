@@ -6,7 +6,7 @@ See `example` folder for an example use of findMM <br>
 ## overview
 findMM is be a simple, python-based command line utility for identifying the multi-mapping transcripts and their multi-mapping connectivity to other transcripts in a reference transcriptome fasta file. The approach to identifying the multi-mapping transcripts is similar to the [`crossmap`](https://plastid.readthedocs.io/en/latest/generated/plastid.bin.crossmap.html) script from the plastid package.
 
-findMM takes a reference transcriptome as input and produces a table of all of the multi-mapping transcripts. For each transcript the multi-mapping table includes the transcript name, transcript length, how many other transcripts it multi-maps with, if there are any internal multi-maps, and what percent of the transcript sequence multi-maps.
+findMM takes a reference transcriptome as input and produces a table of all of the multi-mapping transcripts. For each transcript, the multi-mapping table includes the transcript name, transcript length, how many other transcripts it multi-maps with, if there are any internal multi-maps, and what percent of the transcript sequence multi-maps.
 <br>Multi-mapping table:
 
 | transcript | length (bp) | percent of transcript that multi-maps | external multi-maps | internal multi-maps? |
