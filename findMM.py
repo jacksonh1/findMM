@@ -306,11 +306,10 @@ def fractionMM(depth_file, idxstats_file):
     return dep_idx
 
 
-# TODO - print fraction of transcriptome that multi-maps
-# TODO - external multi-maps -> int
+# to-do: external multi-maps -> int
 def build_table(depth_file, idxstats_file, MM_network_file):
     """
-    build network using samtools depth, samtools idxstats, and network file
+    build table using samtools depth, samtools idxstats, and network file
     """
     net = pd.read_csv(MM_network_file)
     net = net.drop("MM-kmer-alignments", axis=1)
